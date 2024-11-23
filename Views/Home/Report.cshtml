@@ -1,0 +1,75 @@
+@model IEnumerable<Relawan.Web.ViewModels.PersonViewModel>
+
+@{
+    ViewData["Title"] = "People Report";
+}
+
+<h1>Data Pemilih</h1>
+<div class="row">
+    <div class="col">Jumlah ORGAN RELAWAN</div>
+    <div class="col">@ViewBag.totalOrgan</div>
+    <div class="w-100"></div>
+    <div class="col">Total Data Kecamatan</div>
+    <div class="col">@ViewBag.totalKecamatan</div>
+    <div class="w-100"></div>
+    <div class="col">Total Data Desa</div>
+    <div class="col">@ViewBag.totalDesa</div>
+    <div class="w-100"></div>
+    <div class="col">Total Data Pemilih</div>
+    <div class="col">@ViewBag.total</div>
+    <div class="w-100"></div>
+    <div class="col">Total Data Ganda</div>
+    <div class="col">@ViewBag.totalDuplicate</div>
+  </div>
+<table id="peopleTable" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Kecamatan</th>
+            <th>Desa</th>
+            <th>Name</th>
+            <th>NIK</th>
+            <th>Dusun</th>
+            <th>RT</th>
+            <th>RW</th>
+            <th>Ganda</th>
+            <th>ORGAN RELAWAN</th>
+            <th>Riwayat Upload</th>
+        </tr>
+    </thead>
+</table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
+    <script>
+        $(document).ready(function () {
+            $('#peopleTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '@Url.Action("GetPeople", "Home")',
+                    type: 'GET'
+                },
+                search: {
+                    return: true
+                },
+                columns: [
+                    { data: 'kecamatan' },
+                    { data: 'desa' },
+                    { data: 'name' },
+                    { data: 'identityNumber' },
+                    { data: 'dusun' },
+                    { data: 'rt' },
+                    { data: 'rw' },
+                    { data: 'duplicateCount'},
+                    { data: 'createdBy' },
+                    { data: 'createdAt', render: function (data) {
+                        return new Date(data).toLocaleDateString();
+                    } },
+                    { data: 'historyDesc' }
+                ]
+            });
+        });
+    </script>
+}

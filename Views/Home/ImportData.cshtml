@@ -1,0 +1,30 @@
+@model Relawan.Web.ViewModels.ImportDataViewModel
+
+<h2>Upload Data</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @ViewBag.Message
+    </div>
+}
+
+<form asp-action="ImportData" asp-controller="Home" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="GroupName">Nama Grup Relawan</label>
+        <input asp-for="GroupName" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label asp-for="Name">Nama Lengkap</label>
+        <input asp-for="Name" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label asp-for="IdentityNumber">NIK</label>
+        <input asp-for="IdentityNumber" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label asp-for="PeopleFile">Upload Data yang sudah dikumpulkan</label>
+        <input asp-for="PeopleFile" type="file" class="form-control-file" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Kirim</button>
+</form>

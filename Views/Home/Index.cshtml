@@ -1,0 +1,26 @@
+﻿@model List<Relawan.Web.Datas.Relawan>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Selamat datang di web pendataan calon pemilih untuk Kab. Pangandaran</h1>
+    <p>Silahkan input data pemilih yang dikumpulkan klik tombol dibawah ini.</p>
+    <table class="table">
+        <tr>
+            <th>Nama ORGAN</th>
+            <th>Nama Pengupload</th>
+            <th>NIK/ID ORGAN</th>
+        </tr>
+        @foreach( var data in Model){
+            <tr>
+                <td>@data.GroupName</td>
+                <td>@data.Name</td>
+                <td>@data.IdentityNumber</td>
+            </tr>
+        }
+    </table>
+    
+    <a asp-controller="Home" asp-action="ImportData" class="btn btn-secondary">Masukan Data Pemilih</a>
+
+</div>
