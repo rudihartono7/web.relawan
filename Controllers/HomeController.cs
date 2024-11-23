@@ -122,6 +122,75 @@ public class HomeController : Controller
         return View();
     }
 
+    public async Task<IActionResult> DataGanda(){
+        var data = await _context.People.GroupBy(x => new { x.Kecamatan, x.Desa, x.Name }).Where(x => x.Count() > 1).CountAsync();
+
+        ViewBag.DataGanda = data;
+        return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetDataGanda([FromQuery] DataTablesRequest request)
+    {
+        // Base query
+        var query = _context.People.AsQueryable();
+
+        // Apply search filter
+        if(!string.IsNullOrEmpty(request.SearchValue))
+        {
+            query = query.Where(p => 
+                (p.CreatedBy != null && p.CreatedBy.Contains(request.SearchValue)) ||
+                p.Kecamatan.Contains(request.SearchValue) ||
+                p.Desa.Contains(request.SearchValue) ||
+                p.Name.Contains(request.SearchValue) ||
+                p.IdentityNumber.Contains(request.SearchValue));
+        }
+
+        var totalRecords = await (from a in query
+        group a by new { a.Kecamatan, a.Desa, a.Name } into duplicateValue
+        where duplicateValue.Count() > 1
+        select new PersonViewModel {
+            Id = duplicateValue.FirstOrDefault().Id
+        }
+        ).CountAsync();
+
+        var data = await (from a in query
+        group a by new { a.Kecamatan, a.Desa, a.Name } into duplicateValue
+        where duplicateValue.Count() > 1
+        select new PersonViewModel {
+            Id = duplicateValue.OrderBy( x=>x.CreatedAt).FirstOrDefault().Id,
+            Kecamatan = duplicateValue.Key.Kecamatan,
+            Desa = duplicateValue.Key.Desa,
+            Name = duplicateValue.Key.Name,
+            IdentityNumber = duplicateValue.OrderBy( x=>x.CreatedAt).FirstOrDefault().IdentityNumber,
+            Dusun = duplicateValue.OrderBy( x=>x.CreatedAt).FirstOrDefault().Dusun,
+            RT = duplicateValue.OrderBy( x=>x.CreatedAt).FirstOrDefault().RT,
+            RW = duplicateValue.OrderBy( x=>x.CreatedAt).FirstOrDefault().RW,
+            NoHP = duplicateValue.OrderBy( x=>x.CreatedAt).FirstOrDefault().NoHP,
+            CreatedAt = duplicateValue.OrderBy( x=>x.CreatedAt).FirstOrDefault().CreatedAt,
+            CreatedBy = duplicateValue.OrderBy( x=>x.CreatedAt).FirstOrDefault().CreatedBy,
+            DuplicateCount = duplicateValue.Count(),
+            History = duplicateValue.OrderBy( x=>x.CreatedAt).Select( x=> new PeopleHistoryData {
+                CreatedAt = x.CreatedAt,
+                CreatedBy = x.CreatedBy
+            }).ToList()
+        }
+        ).Skip(request.Start)
+        .Take(request.Length)
+        .ToListAsync();
+
+        // Prepare DataTables response
+        var response = new DataTablesResponse
+        {
+            Draw = request.Draw,
+            RecordsTotal = totalRecords,
+            RecordsFiltered = totalRecords, // Adjust if additional filtering is added
+            Data = data
+        };
+
+        return Json(response);
+    }
+
     public async Task<IActionResult> Report()
     {
         var totalKecamatan = await _context.People.GroupBy( x => x.Kecamatan).CountAsync();

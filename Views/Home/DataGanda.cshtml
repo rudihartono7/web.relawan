@@ -6,21 +6,12 @@
 
 <h1>Data Pemilih</h1>
 <div class="row">
-    <div class="col">Jumlah ORGAN RELAWAN</div>
-    <div class="col">@ViewBag.totalOrgan</div>
-    <div class="w-100"></div>
-    <div class="col">Total Data Kecamatan</div>
-    <div class="col">@ViewBag.totalKecamatan</div>
-    <div class="w-100"></div>
-    <div class="col">Total Data Desa</div>
-    <div class="col">@ViewBag.totalDesa</div>
-    <div class="w-100"></div>
-    <div class="col">Total Data Pemilih</div>
-    <div class="col">@ViewBag.total</div>
-    <div class="w-100"></div>
     <div class="col">Total Data Ganda</div>
-    <div class="col">@ViewBag.totalDuplicate</div>
-  </div>
+    <div class="col">@ViewBag.DataGanda</div>
+</div>
+<br />
+<br />
+<br />
 <table id="peopleTable" class="display" style="width:100%">
     <thead>
         <tr>
@@ -56,9 +47,9 @@
                 processing: true,
                 serverSide: true,
                 dom: "Bfrltip",
-                lengthMenu: [20, 50, 100, 200, 500],
+                lengthMenu: [100, 500, 1000, 2000, 4000, 8000],
                 ajax: {
-                    url: '@Url.Action("GetPeople", "Home")',
+                    url: '@Url.Action("GetDataGanda", "Home")',
                     type: 'GET'
                 },
                 search: {
